@@ -2,6 +2,7 @@ import pytest, os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -23,7 +24,7 @@ def test_search_by_keyword(driver):
 	# assumes the existance of "Test Resource 123" collection (which is on dev. Better way to do this?)
 	# repositories/4/resources/11842
 	driver.get(str(_base_url))
-	search_field = element = driver.find_element(By.ID, "q0")
+	search_field = driver.find_element(By.ID, "q0")
 	search_field.send_keys("Test Resource 123")
 	assert search_field.get_attribute('value') == 'Test Resource 123'
 	search_field.send_keys(Keys.RETURN)
@@ -36,7 +37,7 @@ def test_is_and_the_implied_operator(driver):
 	# assumes the existance of "Stella Patrick Campbell collection of letters and documents relating to theater" collection
 	# repositories/24/resources/11720
 	driver.get(str(_base_url))
-	search_field = element = driver.find_element(By.ID, "q0")
+	search_field = driver.find_element(By.ID, "q0")
 	search_field.send_keys("campbell theater")
 	search_field.send_keys(Keys.RETURN)
 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
@@ -51,6 +52,24 @@ def test_is_and_the_implied_operator(driver):
 	assert collection_identifier.text == "Collection Identifier: 2003MT-120-2003MT-124, 2003MT-187, 2003MT-238-239"
 	abstract = results[0].find_element(By.CLASS_NAME, "abstract")
 	assert abstract.text == "Summary:\nIncludes letters, ephemera, prompt scripts used by Stella Patrick Campbell, known as Mrs. Patrick Campbell, photographs, scrapbook, poster, sketch at age 16 by her sister, manuscript copies of newspaper articles collected by E. Mary Hand, and other documents.\n\n\nScope and Contents\nContains 16 lots purchased from Dominic Winter Book Auction, August 2002."
+
+def test_search_by_creator(driver):
+	driver.get(str(_base_url))
+	# search by keyword before searching by creator to distinguish between the two
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("dumbarton oaks")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 25
+	# then the same search, but with Creator selected from the dropdown
+	driver.get(str(_base_url))
+	select = Select(driver.find_element(By.ID, 'field0'))
+	select.select_by_visible_text("Creator")
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("dumbarton oaks")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 6
 
 @pytest.fixture(scope='session', autouse=True)
 def driver():
