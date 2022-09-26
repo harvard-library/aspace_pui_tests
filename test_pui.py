@@ -14,6 +14,8 @@ from time import sleep
 _base_url = os.getenv('BASE_URL')
 # print(driver.page_source)
 
+## TEST SEARCHES
+
 def test_main_page_reachable(driver):
 	driver.get(str(_base_url))
 	title = driver.title
@@ -70,6 +72,113 @@ def test_search_by_creator(driver):
 	search_field.send_keys(Keys.RETURN)
 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
 	assert len(results) == 6
+
+def test_search_in_notes(driver):
+	driver.get(str(_base_url))
+	# search by keyword before searching by creator to distinguish between the two
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 5
+	# then the same search, but with Notes selected from the dropdown
+	driver.get(str(_base_url))
+	select = Select(driver.find_element(By.ID, 'field0'))
+	select.select_by_visible_text("Notes")
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 1
+
+def test_search_by_identifier(driver):
+	driver.get(str(_base_url))
+	# search by keyword before searching by creator to distinguish between the two
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("MC 381")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 4
+	# then the same search, but with Notes selected from the dropdown
+	driver.get(str(_base_url))
+	select = Select(driver.find_element(By.ID, 'field0'))
+	select.select_by_visible_text("Identifier")
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("MC 381")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 1
+
+def test_complex_searching(driver):
+	driver.get(str(_base_url))
+	# simple search first to contrast
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("watercolor")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 25
+	# then the complex search
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("watercolor")
+	plus_button = driver.find_element(By.CLASS_NAME, "btn-default")
+	plus_button.click()
+	second_search_field = driver.find_element(By.ID, "q1")
+	second_search_field.send_keys("caricatures")
+	second_search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 2
+	
+def test_limit_by_record_type(driver):
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	select = Select(driver.find_element(By.ID, 'limit'))
+	select.select_by_visible_text("Limit collections")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 3
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	select = Select(driver.find_element(By.ID, 'limit'))
+	select.select_by_visible_text("Limit digital materials")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 2
+
+def test_limit_by_year(driver):
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 5
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	year_field_1 = driver.find_element(By.ID, "from_year0")
+	year_field_2 = driver.find_element(By.ID, "to_year0")
+	year_field_1.send_keys("1876")
+	year_field_2.send_keys("1877")
+	search_field.send_keys("drugs medicines")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 2
+
+# TEST RESULTS
+
+def test_results_priority(driver):
+	# Are collections at the top of the list?
+	driver.get(str(_base_url))
+	search_field = driver.find_element(By.ID, "q0")
+	search_field.send_keys("watercolor caricatures")
+	search_field.send_keys(Keys.RETURN)
+	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+	assert len(results) == 2
+	collection_result = results[0]
+	item_result = results[1]
+	assert collection_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-archive fa-3x"
+	assert item_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-file-o fa-3x"
 
 @pytest.fixture(scope='session', autouse=True)
 def driver():
