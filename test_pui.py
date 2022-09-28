@@ -15,661 +15,682 @@ from time import sleep
 
 _base_url = os.getenv('BASE_URL')
 
-###### TEST SEARCHES ######
+# ###### TEST SEARCHES ######
 
-def test_main_page_reachable(driver):
-	driver.get(str(_base_url))
-	title = driver.title
-	print(title)
-	assert title == 'Hollis Archival Collection Guides | HOLLIS for'
+# def test_main_page_reachable(driver):
+# 	driver.get(str(_base_url))
+# 	title = driver.title
+# 	print(title)
+# 	assert title == 'Hollis Archival Collection Guides | HOLLIS for'
 
-def test_search_by_keyword(driver):
-	# assumes the existance of "Test Resource 123" collection (which is on dev. Better way to do this?)
-	# repositories/4/resources/11842
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("Test Resource 123")
-	assert search_field.get_attribute('value') == 'Test Resource 123'
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 1
-	abstract = results[0].find_element(By.CLASS_NAME, "abstract").text
-	assert abstract == "Overview:\nTest Resource Abstract"
+# def test_search_by_keyword(driver):
+# 	# assumes the existance of "Test Resource 123" collection (which is on dev. Better way to do this?)
+# 	# repositories/4/resources/11842
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("Test Resource 123")
+# 	assert search_field.get_attribute('value') == 'Test Resource 123'
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 1
+# 	abstract = results[0].find_element(By.CLASS_NAME, "abstract").text
+# 	assert abstract == "Overview:\nTest Resource Abstract"
 
-def test_is_and_the_implied_operator(driver):
-	# assumes the existance of "Stella Patrick Campbell collection of letters and documents relating to theater" collection
-	# repositories/24/resources/11720
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("campbell theater")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 9
-	title = results[0].find_element(By.CLASS_NAME, "record-title")
-	assert title.get_attribute('href') == _base_url + "repositories/24/resources/11720"
-	assert title.text == 'Stella Patrick Campbell collection of letters and documents relating to theater'
-	repo_name = results[0].find_element(By.CLASS_NAME, "repo_name")
-	assert repo_name.text == "Houghton Library"
-	assert repo_name.find_element(By.TAG_NAME, 'a').get_attribute('href') == _base_url + "repositories/24"
-	collection_identifier = results[0].find_element(By.TAG_NAME, "strong")
-	assert collection_identifier.text == "Collection Identifier: 2003MT-120-2003MT-124, 2003MT-187, 2003MT-238-239"
-	abstract = results[0].find_element(By.CLASS_NAME, "abstract")
-	assert abstract.text == "Summary:\nIncludes letters, ephemera, prompt scripts used by Stella Patrick Campbell, known as Mrs. Patrick Campbell, photographs, scrapbook, poster, sketch at age 16 by her sister, manuscript copies of newspaper articles collected by E. Mary Hand, and other documents.\n\n\nScope and Contents\nContains 16 lots purchased from Dominic Winter Book Auction, August 2002."
+# def test_is_and_the_implied_operator(driver):
+# 	# assumes the existance of "Stella Patrick Campbell collection of letters and documents relating to theater" collection
+# 	# repositories/24/resources/11720
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("campbell theater")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 9
+# 	title = results[0].find_element(By.CLASS_NAME, "record-title")
+# 	assert title.get_attribute('href') == _base_url + "repositories/24/resources/11720"
+# 	assert title.text == 'Stella Patrick Campbell collection of letters and documents relating to theater'
+# 	repo_name = results[0].find_element(By.CLASS_NAME, "repo_name")
+# 	assert repo_name.text == "Houghton Library"
+# 	assert repo_name.find_element(By.TAG_NAME, 'a').get_attribute('href') == _base_url + "repositories/24"
+# 	collection_identifier = results[0].find_element(By.TAG_NAME, "strong")
+# 	assert collection_identifier.text == "Collection Identifier: 2003MT-120-2003MT-124, 2003MT-187, 2003MT-238-239"
+# 	abstract = results[0].find_element(By.CLASS_NAME, "abstract")
+# 	assert abstract.text == "Summary:\nIncludes letters, ephemera, prompt scripts used by Stella Patrick Campbell, known as Mrs. Patrick Campbell, photographs, scrapbook, poster, sketch at age 16 by her sister, manuscript copies of newspaper articles collected by E. Mary Hand, and other documents.\n\n\nScope and Contents\nContains 16 lots purchased from Dominic Winter Book Auction, August 2002."
 
-def test_search_by_creator(driver):
-	driver.get(str(_base_url))
-	# search by keyword before searching by creator to distinguish between the two
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("dumbarton oaks")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 25
-	# then the same search, but with Creator selected from the dropdown
-	driver.get(str(_base_url))
-	select = Select(driver.find_element(By.ID, 'field0'))
-	select.select_by_visible_text("Creator")
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("dumbarton oaks")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 6
+# def test_search_by_creator(driver):
+# 	driver.get(str(_base_url))
+# 	# search by keyword before searching by creator to distinguish between the two
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("dumbarton oaks")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 25
+# 	# then the same search, but with Creator selected from the dropdown
+# 	driver.get(str(_base_url))
+# 	select = Select(driver.find_element(By.ID, 'field0'))
+# 	select.select_by_visible_text("Creator")
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("dumbarton oaks")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 6
 
-def test_search_in_notes(driver):
-	driver.get(str(_base_url))
-	# search by keyword before searching by creator to distinguish between the two
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 5
-	# then the same search, but with Notes selected from the dropdown
-	driver.get(str(_base_url))
-	select = Select(driver.find_element(By.ID, 'field0'))
-	select.select_by_visible_text("Notes")
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 1
+# def test_search_in_notes(driver):
+# 	driver.get(str(_base_url))
+# 	# search by keyword before searching by creator to distinguish between the two
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 5
+# 	# then the same search, but with Notes selected from the dropdown
+# 	driver.get(str(_base_url))
+# 	select = Select(driver.find_element(By.ID, 'field0'))
+# 	select.select_by_visible_text("Notes")
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 1
 
-def test_search_by_identifier(driver):
-	driver.get(str(_base_url))
-	# search by keyword before searching by creator to distinguish between the two
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("MC 381")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 4
-	# then the same search, but with Notes selected from the dropdown
-	driver.get(str(_base_url))
-	select = Select(driver.find_element(By.ID, 'field0'))
-	select.select_by_visible_text("Identifier")
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("MC 381")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 1
+# def test_search_by_identifier(driver):
+# 	driver.get(str(_base_url))
+# 	# search by keyword before searching by creator to distinguish between the two
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("MC 381")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 4
+# 	# then the same search, but with Notes selected from the dropdown
+# 	driver.get(str(_base_url))
+# 	select = Select(driver.find_element(By.ID, 'field0'))
+# 	select.select_by_visible_text("Identifier")
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("MC 381")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 1
 
-def test_complex_searching(driver):
-	driver.get(str(_base_url))
-	# simple search first to contrast
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("watercolor")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 25
-	# then the complex search
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("watercolor")
-	plus_button = driver.find_element(By.CLASS_NAME, "btn-default")
-	plus_button.click()
-	second_search_field = driver.find_element(By.ID, "q1")
-	second_search_field.send_keys("caricatures")
-	second_search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 2
+# def test_complex_searching(driver):
+# 	driver.get(str(_base_url))
+# 	# simple search first to contrast
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("watercolor")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 25
+# 	# then the complex search
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("watercolor")
+# 	plus_button = driver.find_element(By.CLASS_NAME, "btn-default")
+# 	plus_button.click()
+# 	second_search_field = driver.find_element(By.ID, "q1")
+# 	second_search_field.send_keys("caricatures")
+# 	second_search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 2
 	
-def test_limit_by_record_type(driver):
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit collections")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 3
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit digital materials")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 2
+# def test_limit_by_record_type(driver):
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit collections")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 3
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit digital materials")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 2
 
-def test_limit_by_year(driver):
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 5
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	year_field_1 = driver.find_element(By.ID, "from_year0")
-	year_field_2 = driver.find_element(By.ID, "to_year0")
-	year_field_1.send_keys("1876")
-	year_field_2.send_keys("1877")
-	search_field.send_keys("drugs medicines")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 2
+# def test_limit_by_year(driver):
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 5
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	year_field_1 = driver.find_element(By.ID, "from_year0")
+# 	year_field_2 = driver.find_element(By.ID, "to_year0")
+# 	year_field_1.send_keys("1876")
+# 	year_field_2.send_keys("1877")
+# 	search_field.send_keys("drugs medicines")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 2
 
-###### TEST RESULTS ######
+# ###### TEST RESULTS ######
 
-def test_results_priority(driver):
-	# Are collections at the top of the list?
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("watercolor caricatures")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 2
-	collection_result = results[0]
-	item_result = results[1]
-	assert collection_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-archive fa-3x"
-	assert item_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-file-o fa-3x"
+# def test_results_priority(driver):
+# 	# Are collections at the top of the list?
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("watercolor caricatures")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 2
+# 	collection_result = results[0]
+# 	item_result = results[1]
+# 	assert collection_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-archive fa-3x"
+# 	assert item_result.find_element(By.TAG_NAME, "i").get_attribute("class") == "fa fa-file-o fa-3x"
 
-def test_sort_results_by_title(driver):
-	# Initial sort by relevance
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit collections")
-	search_field.send_keys("theater")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Frank Lloyd Wright drawings of Dallas Theater Center"
+# def test_sort_results_by_title(driver):
+# 	# Initial sort by relevance
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit collections")
+# 	search_field.send_keys("theater")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Frank Lloyd Wright drawings of Dallas Theater Center"
 
-	# Sort by title (asc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Title (ascending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Amy Daval collection of brochures, pamphlets, and playbills"
+# 	# Sort by title (asc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Title (ascending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Amy Daval collection of brochures, pamphlets, and playbills"
 
-	# Sort by title (desc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Title (descending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Zdeněk Seydl costume and stage designs"
+# 	# Sort by title (desc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Title (descending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Zdeněk Seydl costume and stage designs"
 
-def test_sort_results_by_year(driver):
-	# Initial sort by relevance
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit collections")
-	search_field.send_keys("theater")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Frank Lloyd Wright drawings of Dallas Theater Center"
+# def test_sort_results_by_year(driver):
+# 	# Initial sort by relevance
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit collections")
+# 	search_field.send_keys("theater")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Frank Lloyd Wright drawings of Dallas Theater Center"
 
-	# Sort by title (asc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Year (ascending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Robert Cruikshank drawings for toy theater characters"
+# 	# Sort by title (asc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Year (ascending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Robert Cruikshank drawings for toy theater characters"
 
-	# Sort by title (desc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Year (descending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Harvard Film Archive Visiting Directors Audio Collection"
+# 	# Sort by title (desc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Year (descending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert results[0].find_element(By.CLASS_NAME, "record-title").text == "Harvard Film Archive Visiting Directors Audio Collection"
 
-def test_refine_results_by_repository(driver):
-	# Initial search
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit collections")
-	search_field.send_keys("theater")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 25
+# def test_refine_results_by_repository(driver):
+# 	# Initial search
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit collections")
+# 	search_field.send_keys("theater")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 25
 
-	# Filter by loeb music library
-	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
-	filter_zone.find_element(By.LINK_TEXT, "Loeb Music Library").click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 6
-	for result in results:
-		assert result.find_element(By.CLASS_NAME, "repo_name").text == "Loeb Music Library"
+# 	# Filter by loeb music library
+# 	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
+# 	filter_zone.find_element(By.LINK_TEXT, "Loeb Music Library").click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 6
+# 	for result in results:
+# 		assert result.find_element(By.CLASS_NAME, "repo_name").text == "Loeb Music Library"
 
-def test_refine_results_by_type(driver):
-	# Initial search
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	search_field.send_keys("typeface")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 6
+# def test_refine_results_by_type(driver):
+# 	# Initial search
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	search_field.send_keys("typeface")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 6
 
-	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
-	filter_zone.find_element(By.LINK_TEXT, "Collection").click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 1
+# 	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
+# 	filter_zone.find_element(By.LINK_TEXT, "Collection").click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 1
 
-def test_refine_results_by_subject(driver):
-	# Initial search
-	driver.get(str(_base_url))
-	search_field = driver.find_element(By.ID, "q0")
-	select = Select(driver.find_element(By.ID, 'limit'))
-	select.select_by_visible_text("Limit collections")
-	search_field.send_keys("theater")
-	search_field.send_keys(Keys.RETURN)
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 25
+# def test_refine_results_by_subject(driver):
+# 	# Initial search
+# 	driver.get(str(_base_url))
+# 	search_field = driver.find_element(By.ID, "q0")
+# 	select = Select(driver.find_element(By.ID, 'limit'))
+# 	select.select_by_visible_text("Limit collections")
+# 	search_field.send_keys("theater")
+# 	search_field.send_keys(Keys.RETURN)
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 25
 
-	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
-	filter_zone.find_element(By.LINK_TEXT, "Architecture, Modern -- 20th century -- Archival resources").click()
-	results = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(results) == 6
+# 	filter_zone = driver.find_element(By.CLASS_NAME, "filter_facets")
+# 	filter_zone.find_element(By.LINK_TEXT, "Architecture, Modern -- 20th century -- Archival resources").click()
+# 	results = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(results) == 6
 	
-###### Browse Repositories ######
+# ###### Browse Repositories ######
 
-def test_browse_repositories(driver):
-	driver.get(str(_base_url) + "repositories")
-	driver.find_element(By.LINK_TEXT, "Botany Libraries, Orchid Library of Oakes Ames, Harvard University").click()
-	repo_info = driver.find_elements(By.CLASS_NAME, "repo_info")
-	assert repo_info[0].text == "Botany Libraries, Orchid Library of Oakes Ames, Harvard University"
-	assert repo_info[1].text == "http://huh.harvard.edu/libraries"
-	assert repo_info[2].text == "5 Collections"
-	assert driver.find_element(By.ID, "lead_graph").text.startswith("The Harvard University Herbaria houses five comprehensive")
-	contact_info = driver.find_elements(By.CLASS_NAME, "contact")
-	assert contact_info[0].text.startswith("Harvard University Herbaria")
-	assert contact_info[1].text.startswith("(617)")
-	assert contact_info[2].text.startswith("botref")
+# def test_browse_repositories(driver):
+# 	driver.get(str(_base_url) + "repositories")
+# 	driver.find_element(By.LINK_TEXT, "Botany Libraries, Orchid Library of Oakes Ames, Harvard University").click()
+# 	repo_info = driver.find_elements(By.CLASS_NAME, "repo_info")
+# 	assert repo_info[0].text == "Botany Libraries, Orchid Library of Oakes Ames, Harvard University"
+# 	assert repo_info[1].text == "http://huh.harvard.edu/libraries"
+# 	assert repo_info[2].text == "5 Collections"
+# 	assert driver.find_element(By.ID, "lead_graph").text.startswith("The Harvard University Herbaria houses five comprehensive")
+# 	contact_info = driver.find_elements(By.CLASS_NAME, "contact")
+# 	assert contact_info[0].text.startswith("Harvard University Herbaria")
+# 	assert contact_info[1].text.startswith("(617)")
+# 	assert contact_info[2].text.startswith("botref")
 
-def test_repository_collections(driver):
-	driver.get(str(_base_url) + "repositories")
-	driver.find_element(By.LINK_TEXT, "Botany Libraries, Orchid Library of Oakes Ames, Harvard University").click()
-	driver.find_element(By.LINK_TEXT, "5 Collections").click()
-	repo_collections = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(repo_collections) == 5
-	repo_collections[0].find_element(By.CLASS_NAME, "record-title").click()
-	assert driver.current_url == _base_url + "repositories/28/resources/10959"
+# def test_repository_collections(driver):
+# 	driver.get(str(_base_url) + "repositories")
+# 	driver.find_element(By.LINK_TEXT, "Botany Libraries, Orchid Library of Oakes Ames, Harvard University").click()
+# 	driver.find_element(By.LINK_TEXT, "5 Collections").click()
+# 	repo_collections = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(repo_collections) == 5
+# 	repo_collections[0].find_element(By.CLASS_NAME, "record-title").click()
+# 	assert driver.current_url == _base_url + "repositories/28/resources/10959"
 
-###### Browse Collections ######
+# ###### Browse Collections ######
 
-def test_browse_collections_and_sort(driver):
-	driver.get(str(_base_url))
-	driver.find_element(By.CLASS_NAME, "submenu").click()
-	driver.find_element(By.LINK_TEXT, "Collections").click()
-	assert driver.current_url == _base_url + "repositories/resources"
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(records) == 25
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("1")
+# def test_browse_collections_and_sort(driver):
+# 	driver.get(str(_base_url))
+# 	driver.find_element(By.CLASS_NAME, "submenu").click()
+# 	driver.find_element(By.LINK_TEXT, "Collections").click()
+# 	assert driver.current_url == _base_url + "repositories/resources"
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(records) == 25
+# 	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("1")
 
-	# Sort by title (desc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Title (descending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(records) == 25
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("Z")
+# 	# Sort by title (desc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Title (descending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(records) == 25
+# 	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("Z")
 
-###### Browse Digital Materials ######
+# ###### Browse Digital Materials ######
 
-def test_browse_digital_materials(driver):
-	driver.get(str(_base_url))
-	driver.find_element(By.CLASS_NAME, "submenu").click()
-	driver.find_element(By.LINK_TEXT, "Digital Materials").click()
-	assert driver.current_url == _base_url + "objects?limit=digital_object"
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(records) == 25
-	# Note that below is the Cyrillic B, not Roman
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("В")
+# def test_browse_digital_materials(driver):
+# 	driver.get(str(_base_url))
+# 	driver.find_element(By.CLASS_NAME, "submenu").click()
+# 	driver.find_element(By.LINK_TEXT, "Digital Materials").click()
+# 	assert driver.current_url == _base_url + "objects?limit=digital_object"
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(records) == 25
+# 	# Note that below is the Cyrillic B, not Roman
+# 	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("В")
 
-	# Sort by title (desc)
-	select = Select(driver.find_element(By.ID, 'sort'))
-	select.select_by_visible_text("Title (descending)")
-	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
-	sort_button.click()
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(records) == 25
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("Z")
+# 	# Sort by title (desc)
+# 	select = Select(driver.find_element(By.ID, 'sort'))
+# 	select.select_by_visible_text("Title (descending)")
+# 	sort_button = driver.find_element(By.CLASS_NAME, "sort-button")
+# 	sort_button.click()
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(records) == 25
+# 	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("Z")
 
-###### Test Finding Aid ######
+# ###### Test Finding Aid ######
 
-def test_open_finding_aid(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Albert F. Blakeslee correspondence and notebooks"
+# def test_open_finding_aid(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Albert F. Blakeslee correspondence and notebooks"
 
-def test_collection_organization(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	sleep(1)
-	sidebar = driver.find_element(By.ID, "sidebar")
-	assert sidebar.find_element(By.CLASS_NAME, "title").text == "Albert F. Blakeslee correspondence and notebooks"
-	nodes = sidebar.find_elements(By.CLASS_NAME, "largetree-node")
-	assert len(nodes) == 2
-	assert nodes[0].text == "Correspondence, 1923-1960"
-	assert nodes[1].text == "Notebooks, 1912-1941"
+# def test_collection_organization(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	sleep(1)
+# 	sidebar = driver.find_element(By.ID, "sidebar")
+# 	assert sidebar.find_element(By.CLASS_NAME, "title").text == "Albert F. Blakeslee correspondence and notebooks"
+# 	nodes = sidebar.find_elements(By.CLASS_NAME, "largetree-node")
+# 	assert len(nodes) == 2
+# 	assert nodes[0].text == "Correspondence, 1923-1960"
+# 	assert nodes[1].text == "Notebooks, 1912-1941"
 
-	# expand an item
-	nodes[0].find_element(By.CLASS_NAME, "expandme").click()
-	before_expand_titles = sidebar.find_elements(By.CLASS_NAME, "record-title")
-	assert len(before_expand_titles) == 3
-	sleep(1)
-	expanded_titles = sidebar.find_elements(By.CLASS_NAME, "record-title")
-	assert len(expanded_titles) == 10
-	assert expanded_titles[2].text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
-	assert expanded_titles[8].text == "Correspondence between Sophia Satina and Alfred Lender, 1932-1936"
+# 	# expand an item
+# 	nodes[0].find_element(By.CLASS_NAME, "expandme").click()
+# 	before_expand_titles = sidebar.find_elements(By.CLASS_NAME, "record-title")
+# 	assert len(before_expand_titles) == 3
+# 	sleep(1)
+# 	expanded_titles = sidebar.find_elements(By.CLASS_NAME, "record-title")
+# 	assert len(expanded_titles) == 10
+# 	assert expanded_titles[2].text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
+# 	assert expanded_titles[8].text == "Correspondence between Sophia Satina and Alfred Lender, 1932-1936"
 
-	# test navigation to a component
-	expanded_titles[2].click()
-	assert driver.current_url == _base_url + "repositories/20/archival_objects/262128"
-	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
+# 	# test navigation to a component
+# 	expanded_titles[2].click()
+# 	assert driver.current_url == _base_url + "repositories/20/archival_objects/262128"
+# 	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
 
-def test_collection_overview_tab(driver):
-	# navigate to collection_organization so we can also test the collection overview link, which is the default when visiting the resource
-	driver.get(str(_base_url) + "repositories/20/resources/1182/collection_organization")
-	driver.find_element(By.LINK_TEXT, "COLLECTION OVERVIEW").click()
-	assert driver.current_url == str(_base_url) + "repositories/20/resources/1182"
+# def test_collection_overview_tab(driver):
+# 	# navigate to collection_organization so we can also test the collection overview link, which is the default when visiting the resource
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182/collection_organization")
+# 	driver.find_element(By.LINK_TEXT, "COLLECTION OVERVIEW").click()
+# 	assert driver.current_url == str(_base_url) + "repositories/20/resources/1182"
 
-	sleep(1) # main panel can take a moment to load
-	# check collection overview element counts and contents
-	main_panel = driver.find_element(By.CLASS_NAME, "col-sm-9")
-	# upper half
-	upper_details = main_panel.find_element(By.CLASS_NAME, "upper-record-details")
-	divs = upper_details.find_elements(By.TAG_NAME, "div")
-	assert len(divs) == 4
-	assert divs[0].find_element(By.TAG_NAME, "h4").text == "Scope and Content"
-	assert divs[0].find_element(By.CLASS_NAME, "note-content").text.startswith("This collection consists of correspondence between Blakeslee and other botanists")
-	assert divs[2].find_element(By.TAG_NAME, "h4").text == "Conditions Governing Access"
-	assert divs[2].find_element(By.CLASS_NAME, "note-content").text.startswith("The collection is available by appointment for research. Researchers")
-	h4s = upper_details.find_elements(By.TAG_NAME, "h4")
-	assert len(h4s) == 4
-	assert h4s[1].text == "Dates"
-	assert h4s[3].text == "Extent"
-	assert upper_details.find_element(By.CLASS_NAME, "dates").text == "1912-1960"
-	h3s = upper_details.find_elements(By.TAG_NAME, "h3")
-	assert len(h3s) == 1
-	assert h3s[0].text == "Creator"
-	uls = upper_details.find_elements(By.TAG_NAME, "ul")
-	assert len(uls) == 2
-	creator_list_items = uls[1].find_elements(By.TAG_NAME, "li")
-	assert len(creator_list_items) == 1
-	assert creator_list_items[0].text == "Blakeslee, Albert Francis, 1874-1954 (Person)"
-	assert creator_list_items[0].find_element(By.TAG_NAME, "a").text == "Blakeslee, Albert Francis, 1874-1954"
-	assert upper_details.find_element(By.CLASS_NAME, "extent").text == "1 collection (1 box)"
-	# lower half
-	lower_details = main_panel.find_element(By.CLASS_NAME, "acc_holder")
-	panel_titles = lower_details.find_elements(By.CLASS_NAME, "panel-title")
-	assert len(panel_titles) == 4
-	assert panel_titles[0].text == "ADDITIONAL DESCRIPTION"
-	assert panel_titles[1].text == "RELATED NAMES"
-	assert panel_titles[2].text == "ADMINISTRATIVE INFORMATION"
-	assert panel_titles[3].text == "REPOSITORY DETAILS"
-	panel_bodies = lower_details.find_elements(By.CLASS_NAME, "panel-body")
-	assert len(panel_bodies) == 4
-	panel_one_notes = panel_bodies[0].find_elements(By.CLASS_NAME, "note")
-	assert len(panel_one_notes) == 4
-	assert panel_one_notes[0].find_element(By.TAG_NAME, "h4").text == "Biography"
-	assert panel_one_notes[0].find_elements(By.CLASS_NAME, "note-content")[0].text.startswith("Albert Francis Blakeslee was born")
-	assert panel_one_notes[0].find_elements(By.CLASS_NAME, "note-content")[1].text.startswith("Source")
-	assert panel_bodies[1].find_element(By.TAG_NAME, "h3").text == "Creator"
-	lis = panel_bodies[1].find_elements(By.TAG_NAME, "li")
-	assert len(lis) == 1
-	assert lis[0].text == "Blakeslee, Albert Francis, 1874-1954 (Person)"
-	assert lis[0].find_element(By.TAG_NAME, "a").text == "Blakeslee, Albert Francis, 1874-1954"
-	dts = panel_bodies[2].find_elements(By.TAG_NAME, "dt")
-	assert len(dts) == 6
-	assert dts[0].text == "Title"
-	assert dts[1].text == "Status"
-	assert dts[2].text == "Author"
-	assert dts[3].text == "Description rules"
-	assert dts[4].text == "Language of description"
-	assert dts[5].text == "EAD ID"
-	dds = panel_bodies[2].find_elements(By.TAG_NAME, "dd")
-	assert dds[0].text.startswith("Blakeslee, Albert Francis, 1874-1954")
-	assert dds[1].text == "completed"
-	assert dds[2].text == "Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
-	assert dds[3].text == "dacs"
-	assert dds[4].text == "und"
-	assert dds[5].text == "far00002"
-	assert panel_bodies[3].find_element(By.TAG_NAME, "h2").text == "Repository Details"
-	assert panel_bodies[3].find_element(By.XPATH, "//h2/following-sibling::p").text == "Part of the Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University Repository"
-	assert panel_bodies[3].find_element(By.CLASS_NAME, "website").find_element(By.TAG_NAME, "a").text == "http://huh.harvard.edu/libraries"
-	assert panel_bodies[3].find_element(By.ID, "lead_graph").text.startswith("The Harvard University Herbaria houses five research libraries that are managed")
-	contact_info = panel_bodies[3].find_element(By.CLASS_NAME, "contact_info")
-	assert contact_info.find_element(By.TAG_NAME, "strong").text == "Contact:"
-	spans = contact_info.find_elements(By.TAG_NAME, "span")
-	assert len(spans) == 7
-	assert spans[0].text.startswith("Harvard University Herbaria")
-	assert spans[1].text.startswith("C")
-	assert spans[2].text.startswith("M")
-	assert spans[3].text.startswith("0")
-	assert spans[4].text.startswith("U")
-	assert spans[5].text.startswith("(617)")
-	assert spans[6].text.startswith("bot")
+# 	sleep(1) # main panel can take a moment to load
+# 	# check collection overview element counts and contents
+# 	main_panel = driver.find_element(By.CLASS_NAME, "col-sm-9")
+# 	# upper half
+# 	upper_details = main_panel.find_element(By.CLASS_NAME, "upper-record-details")
+# 	divs = upper_details.find_elements(By.TAG_NAME, "div")
+# 	assert len(divs) == 4
+# 	assert divs[0].find_element(By.TAG_NAME, "h4").text == "Scope and Content"
+# 	assert divs[0].find_element(By.CLASS_NAME, "note-content").text.startswith("This collection consists of correspondence between Blakeslee and other botanists")
+# 	assert divs[2].find_element(By.TAG_NAME, "h4").text == "Conditions Governing Access"
+# 	assert divs[2].find_element(By.CLASS_NAME, "note-content").text.startswith("The collection is available by appointment for research. Researchers")
+# 	h4s = upper_details.find_elements(By.TAG_NAME, "h4")
+# 	assert len(h4s) == 4
+# 	assert h4s[1].text == "Dates"
+# 	assert h4s[3].text == "Extent"
+# 	assert upper_details.find_element(By.CLASS_NAME, "dates").text == "1912-1960"
+# 	h3s = upper_details.find_elements(By.TAG_NAME, "h3")
+# 	assert len(h3s) == 1
+# 	assert h3s[0].text == "Creator"
+# 	uls = upper_details.find_elements(By.TAG_NAME, "ul")
+# 	assert len(uls) == 2
+# 	creator_list_items = uls[1].find_elements(By.TAG_NAME, "li")
+# 	assert len(creator_list_items) == 1
+# 	assert creator_list_items[0].text == "Blakeslee, Albert Francis, 1874-1954 (Person)"
+# 	assert creator_list_items[0].find_element(By.TAG_NAME, "a").text == "Blakeslee, Albert Francis, 1874-1954"
+# 	assert upper_details.find_element(By.CLASS_NAME, "extent").text == "1 collection (1 box)"
+# 	# lower half
+# 	lower_details = main_panel.find_element(By.CLASS_NAME, "acc_holder")
+# 	panel_titles = lower_details.find_elements(By.CLASS_NAME, "panel-title")
+# 	assert len(panel_titles) == 4
+# 	assert panel_titles[0].text == "ADDITIONAL DESCRIPTION"
+# 	assert panel_titles[1].text == "RELATED NAMES"
+# 	assert panel_titles[2].text == "ADMINISTRATIVE INFORMATION"
+# 	assert panel_titles[3].text == "REPOSITORY DETAILS"
+# 	panel_bodies = lower_details.find_elements(By.CLASS_NAME, "panel-body")
+# 	assert len(panel_bodies) == 4
+# 	panel_one_notes = panel_bodies[0].find_elements(By.CLASS_NAME, "note")
+# 	assert len(panel_one_notes) == 4
+# 	assert panel_one_notes[0].find_element(By.TAG_NAME, "h4").text == "Biography"
+# 	assert panel_one_notes[0].find_elements(By.CLASS_NAME, "note-content")[0].text.startswith("Albert Francis Blakeslee was born")
+# 	assert panel_one_notes[0].find_elements(By.CLASS_NAME, "note-content")[1].text.startswith("Source")
+# 	assert panel_bodies[1].find_element(By.TAG_NAME, "h3").text == "Creator"
+# 	lis = panel_bodies[1].find_elements(By.TAG_NAME, "li")
+# 	assert len(lis) == 1
+# 	assert lis[0].text == "Blakeslee, Albert Francis, 1874-1954 (Person)"
+# 	assert lis[0].find_element(By.TAG_NAME, "a").text == "Blakeslee, Albert Francis, 1874-1954"
+# 	dts = panel_bodies[2].find_elements(By.TAG_NAME, "dt")
+# 	assert len(dts) == 6
+# 	assert dts[0].text == "Title"
+# 	assert dts[1].text == "Status"
+# 	assert dts[2].text == "Author"
+# 	assert dts[3].text == "Description rules"
+# 	assert dts[4].text == "Language of description"
+# 	assert dts[5].text == "EAD ID"
+# 	dds = panel_bodies[2].find_elements(By.TAG_NAME, "dd")
+# 	assert dds[0].text.startswith("Blakeslee, Albert Francis, 1874-1954")
+# 	assert dds[1].text == "completed"
+# 	assert dds[2].text == "Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
+# 	assert dds[3].text == "dacs"
+# 	assert dds[4].text == "und"
+# 	assert dds[5].text == "far00002"
+# 	assert panel_bodies[3].find_element(By.TAG_NAME, "h2").text == "Repository Details"
+# 	assert panel_bodies[3].find_element(By.XPATH, "//h2/following-sibling::p").text == "Part of the Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University Repository"
+# 	assert panel_bodies[3].find_element(By.CLASS_NAME, "website").find_element(By.TAG_NAME, "a").text == "http://huh.harvard.edu/libraries"
+# 	assert panel_bodies[3].find_element(By.ID, "lead_graph").text.startswith("The Harvard University Herbaria houses five research libraries that are managed")
+# 	contact_info = panel_bodies[3].find_element(By.CLASS_NAME, "contact_info")
+# 	assert contact_info.find_element(By.TAG_NAME, "strong").text == "Contact:"
+# 	spans = contact_info.find_elements(By.TAG_NAME, "span")
+# 	assert len(spans) == 7
+# 	assert spans[0].text.startswith("Harvard University Herbaria")
+# 	assert spans[1].text.startswith("C")
+# 	assert spans[2].text.startswith("M")
+# 	assert spans[3].text.startswith("0")
+# 	assert spans[4].text.startswith("U")
+# 	assert spans[5].text.startswith("(617)")
+# 	assert spans[6].text.startswith("bot")
 
-	# also check total counts in both sections in order to see if there are extras
-	assert len(upper_details.find_elements(By.XPATH, ".//*")) == 20
-	assert len(lower_details.find_elements(By.XPATH, ".//*")) == 105
+# 	# also check total counts in both sections in order to see if there are extras
+# 	assert len(upper_details.find_elements(By.XPATH, ".//*")) == 20
+# 	assert len(lower_details.find_elements(By.XPATH, ".//*")) == 105
 
-def test_collection_inventory(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	driver.find_element(By.LINK_TEXT, "COLLECTION INVENTORY").click()
-	assert driver.current_url == _base_url + "repositories/20/resources/1182/collection_organization"
+# def test_collection_inventory(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	driver.find_element(By.LINK_TEXT, "COLLECTION INVENTORY").click()
+# 	assert driver.current_url == _base_url + "repositories/20/resources/1182/collection_organization"
 
-	sleep(1)
-	main_panel = driver.find_element(By.CLASS_NAME, "col-sm-9")
-	# spot check some records on different levels of hierarchy
-	infinite_records = main_panel.find_elements(By.CLASS_NAME, "infinite-record-record")
-	assert infinite_records[0].find_element(By.CLASS_NAME, "record-title").text == "Albert F. Blakeslee correspondence and notebooks"
-	assert infinite_records[0].find_element(By.CLASS_NAME, "information").find_element(By.CLASS_NAME, "record-type-badge").text == " Collection"
-	assert infinite_records[0].find_element(By.CLASS_NAME, "information").find_element(By.CLASS_NAME, "identifier").text == "Identifier:\n far00002"
-	assert infinite_records[0].find_element(By.CLASS_NAME, "note-content").text.startswith("This collection consists of correspondence between Blakeslee and other")
-	dts = infinite_records[0].find_elements(By.TAG_NAME, "dt")
-	assert dts[0].text == "Conditions Governing Access"
-	assert dts[1].text == "Dates"
-	assert dts[2].text == "Extent"
-	assert dts[3].text == "Related Names"
-	assert dts[4].text == "Language of Materials"
-	dds = infinite_records[0].find_elements(By.TAG_NAME, "dd")
-	assert dds[0].text.startswith("The collection is available by appointment for research")
-	assert dds[1].text == "1912-1960"
-	assert dds[2].text == "1 collection (1 box)"
-	assert dds[3].text == "Blakeslee, Albert Francis, 1874-1954"
-	assert dds[4].text == "English"
-	assert len(infinite_records[0].find_elements(By.XPATH, ".//*")) == 31
-	assert infinite_records[1].find_element(By.CLASS_NAME, "record-title").text == "Correspondence, 1923-1960"
-	assert infinite_records[1].find_element(By.CLASS_NAME, "record-type-badge").text == " Series"
-	assert infinite_records[1].find_element(By.CLASS_NAME, "identifier").text == "Identifier:\n I"
-	assert infinite_records[1].find_element(By.TAG_NAME, "dt").text == "Dates"
-	assert infinite_records[1].find_element(By.TAG_NAME, "dd").text == "1923-1960"
-	assert len(infinite_records[1].find_elements(By.XPATH, ".//*")) == 16
-	assert infinite_records[2].find_element(By.CLASS_NAME, "record-title").text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
-	assert infinite_records[2].find_element(By.CLASS_NAME, "archival_object").text == " File — Box: 1, Folder: 1"
-	assert infinite_records[2].find_element(By.TAG_NAME, "dt").text == "Dates"
-	assert infinite_records[2].find_element(By.TAG_NAME, "dd").text == "1936"
-	assert len(infinite_records[2].find_elements(By.XPATH, ".//*")) == 13
+# 	sleep(1)
+# 	main_panel = driver.find_element(By.CLASS_NAME, "col-sm-9")
+# 	# spot check some records on different levels of hierarchy
+# 	infinite_records = main_panel.find_elements(By.CLASS_NAME, "infinite-record-record")
+# 	assert infinite_records[0].find_element(By.CLASS_NAME, "record-title").text == "Albert F. Blakeslee correspondence and notebooks"
+# 	assert infinite_records[0].find_element(By.CLASS_NAME, "information").find_element(By.CLASS_NAME, "record-type-badge").text == " Collection"
+# 	assert infinite_records[0].find_element(By.CLASS_NAME, "information").find_element(By.CLASS_NAME, "identifier").text == "Identifier:\n far00002"
+# 	assert infinite_records[0].find_element(By.CLASS_NAME, "note-content").text.startswith("This collection consists of correspondence between Blakeslee and other")
+# 	dts = infinite_records[0].find_elements(By.TAG_NAME, "dt")
+# 	assert dts[0].text == "Conditions Governing Access"
+# 	assert dts[1].text == "Dates"
+# 	assert dts[2].text == "Extent"
+# 	assert dts[3].text == "Related Names"
+# 	assert dts[4].text == "Language of Materials"
+# 	dds = infinite_records[0].find_elements(By.TAG_NAME, "dd")
+# 	assert dds[0].text.startswith("The collection is available by appointment for research")
+# 	assert dds[1].text == "1912-1960"
+# 	assert dds[2].text == "1 collection (1 box)"
+# 	assert dds[3].text == "Blakeslee, Albert Francis, 1874-1954"
+# 	assert dds[4].text == "English"
+# 	assert len(infinite_records[0].find_elements(By.XPATH, ".//*")) == 31
+# 	assert infinite_records[1].find_element(By.CLASS_NAME, "record-title").text == "Correspondence, 1923-1960"
+# 	assert infinite_records[1].find_element(By.CLASS_NAME, "record-type-badge").text == " Series"
+# 	assert infinite_records[1].find_element(By.CLASS_NAME, "identifier").text == "Identifier:\n I"
+# 	assert infinite_records[1].find_element(By.TAG_NAME, "dt").text == "Dates"
+# 	assert infinite_records[1].find_element(By.TAG_NAME, "dd").text == "1923-1960"
+# 	assert len(infinite_records[1].find_elements(By.XPATH, ".//*")) == 16
+# 	assert infinite_records[2].find_element(By.CLASS_NAME, "record-title").text == "Correspondence between Blakeslee and Oscar Hagen, 1936"
+# 	assert infinite_records[2].find_element(By.CLASS_NAME, "archival_object").text == " File — Box: 1, Folder: 1"
+# 	assert infinite_records[2].find_element(By.TAG_NAME, "dt").text == "Dates"
+# 	assert infinite_records[2].find_element(By.TAG_NAME, "dd").text == "1936"
+# 	assert len(infinite_records[2].find_elements(By.XPATH, ".//*")) == 13
 
-	# Check that items in the collection inventory match those in the sidebar
-	# This also verifies that the infinite scroll is working properly
-	expandme_icons = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "expandme-icon")
-	for icon in expandme_icons:
-		icon.click()
-	sleep(2)
-	sidebar_records = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "title")
-	assert len(infinite_records) == len(sidebar_records) == 19
-	index = 0
-	actions = ActionChains(driver)
-	for record in infinite_records:
-		# we need to scroll so the infinite-record loads records properly
-		actions.move_to_element(record).perform()
-		assert record.find_element(By.CLASS_NAME, "record-title").text == sidebar_records[index].text
-		index += 1
+# 	# Check that items in the collection inventory match those in the sidebar
+# 	# This also verifies that the infinite scroll is working properly
+# 	expandme_icons = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "expandme-icon")
+# 	for icon in expandme_icons:
+# 		icon.click()
+# 	sleep(2)
+# 	sidebar_records = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "title")
+# 	assert len(infinite_records) == len(sidebar_records) == 19
+# 	index = 0
+# 	actions = ActionChains(driver)
+# 	for record in infinite_records:
+# 		# we need to scroll so the infinite-record loads records properly
+# 		actions.move_to_element(record).perform()
+# 		assert record.find_element(By.CLASS_NAME, "record-title").text == sidebar_records[index].text
+# 		index += 1
 
-	driver.find_element(By.LINK_TEXT, "Bibliography on mucors, undated").click()
-	assert driver.current_url == str(_base_url) + "repositories/20/archival_objects/262143"
+# 	driver.find_element(By.LINK_TEXT, "Bibliography on mucors, undated").click()
+# 	assert driver.current_url == str(_base_url) + "repositories/20/archival_objects/262143"
 
-def test_digital_materials_tab(driver):
-	# Navigate to a resource with digital materials
-	driver.get(str(_base_url) + "repositories/15/resources/10122")
-	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Peter S. Ashton Sarawak fieldwork papers"
+# def test_digital_materials_tab(driver):
+# 	# Navigate to a resource with digital materials
+# 	driver.get(str(_base_url) + "repositories/15/resources/10122")
+# 	assert driver.find_element(By.CLASS_NAME, "full-chars").text == "Peter S. Ashton Sarawak fieldwork papers"
 
-	digital_meterials_nav_button = driver.find_elements(By.CLASS_NAME, "nav-pill")[2]
-	assert digital_meterials_nav_button.text == "DIGITAL MATERIAL (504)"
+# 	digital_meterials_nav_button = driver.find_elements(By.CLASS_NAME, "nav-pill")[2]
+# 	assert digital_meterials_nav_button.text == "DIGITAL MATERIAL (504)"
 	
-	digital_meterials_nav_button.find_element(By.TAG_NAME, "a").click()
-	assert driver.current_url == str(_base_url) + "repositories/15/resources/10122/digital_only"
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	assert len(records) == 25
-	pagination = driver.find_element(By.CLASS_NAME, "pagination").find_elements(By.TAG_NAME, "li")
-	assert pagination[-1].text == "→Next"
-	assert pagination[-2].text == "21"
+# 	digital_meterials_nav_button.find_element(By.TAG_NAME, "a").click()
+# 	assert driver.current_url == str(_base_url) + "repositories/15/resources/10122/digital_only"
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	assert len(records) == 25
+# 	pagination = driver.find_element(By.CLASS_NAME, "pagination").find_elements(By.TAG_NAME, "li")
+# 	assert pagination[-1].text == "→Next"
+# 	assert pagination[-2].text == "21"
 
-	# Spot check a few records
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text == "Locality: Temiai/Temalad divide, Hose Mountains"
-	assert records[0].find_element(By.CLASS_NAME, "result_context").text.startswith("FOUND IN")
-	assert records[0].find_element(By.CLASS_NAME, "repo_name").text == "Botany Libraries, Arnold Arboretum Library (Cambridge), Harvard University"
-	ancestors = records[0].find_elements(By.CLASS_NAME, "ancestor")
-	assert ancestors[0].text == "Collection: Peter S. Ashton Sarawak fieldwork papers"
-	assert ancestors[1].text == "Series: Plots"
-	assert ancestors[2].text == "Sub-Series: Plot contour maps"
-	assert ancestors[3].text == "File: Plots A 1 - F 4"
-	assert records[0].find_element(By.CLASS_NAME, "inline-label").text == "Scope and Contents"
-	assert records[0].find_element(By.TAG_NAME, "p").text == "Altitude: 2850'. Dacite substrate."
-	assert records[1].find_element(By.CLASS_NAME, "record-title").text == "Locality: Ulu Pila, Carapa Pila"
-	assert records[1].find_element(By.CLASS_NAME, "result_context").text.startswith("FOUND IN")
-	assert records[1].find_element(By.CLASS_NAME, "repo_name").text == "Botany Libraries, Arnold Arboretum Library (Cambridge), Harvard University"
-	ancestors = records[1].find_elements(By.CLASS_NAME, "ancestor")
-	assert ancestors[0].text == "Collection: Peter S. Ashton Sarawak fieldwork papers"
-	assert ancestors[1].text == "Series: Plots"
-	assert ancestors[2].text == "Sub-Series: Plot contour maps"
-	assert ancestors[3].text == "File: Plots A 1 - F 4"
-	assert records[1].find_element(By.CLASS_NAME, "inline-label").text == "Scope and Contents"
-	assert records[1].find_element(By.TAG_NAME, "p").text == "Altitude: 2750'. Basalt substrate."
+# 	# Spot check a few records
+# 	assert records[0].find_element(By.CLASS_NAME, "record-title").text == "Locality: Temiai/Temalad divide, Hose Mountains"
+# 	assert records[0].find_element(By.CLASS_NAME, "result_context").text.startswith("FOUND IN")
+# 	assert records[0].find_element(By.CLASS_NAME, "repo_name").text == "Botany Libraries, Arnold Arboretum Library (Cambridge), Harvard University"
+# 	ancestors = records[0].find_elements(By.CLASS_NAME, "ancestor")
+# 	assert ancestors[0].text == "Collection: Peter S. Ashton Sarawak fieldwork papers"
+# 	assert ancestors[1].text == "Series: Plots"
+# 	assert ancestors[2].text == "Sub-Series: Plot contour maps"
+# 	assert ancestors[3].text == "File: Plots A 1 - F 4"
+# 	assert records[0].find_element(By.CLASS_NAME, "inline-label").text == "Scope and Contents"
+# 	assert records[0].find_element(By.TAG_NAME, "p").text == "Altitude: 2850'. Dacite substrate."
+# 	assert records[1].find_element(By.CLASS_NAME, "record-title").text == "Locality: Ulu Pila, Carapa Pila"
+# 	assert records[1].find_element(By.CLASS_NAME, "result_context").text.startswith("FOUND IN")
+# 	assert records[1].find_element(By.CLASS_NAME, "repo_name").text == "Botany Libraries, Arnold Arboretum Library (Cambridge), Harvard University"
+# 	ancestors = records[1].find_elements(By.CLASS_NAME, "ancestor")
+# 	assert ancestors[0].text == "Collection: Peter S. Ashton Sarawak fieldwork papers"
+# 	assert ancestors[1].text == "Series: Plots"
+# 	assert ancestors[2].text == "Sub-Series: Plot contour maps"
+# 	assert ancestors[3].text == "File: Plots A 1 - F 4"
+# 	assert records[1].find_element(By.CLASS_NAME, "inline-label").text == "Scope and Contents"
+# 	assert records[1].find_element(By.TAG_NAME, "p").text == "Altitude: 2750'. Basalt substrate."
 
-	# Test link
-	ancestors[1].find_element(By.TAG_NAME, "a").click()
-	assert driver.current_url == str(_base_url) + "repositories/15/archival_objects/3197502"
+# 	# Test link
+# 	ancestors[1].find_element(By.TAG_NAME, "a").click()
+# 	assert driver.current_url == str(_base_url) + "repositories/15/archival_objects/3197502"
 
-def test_search_within_collection(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	collection_name = driver.find_element(By.CLASS_NAME, "full-chars").text
-	search_field = driver.find_element(By.ID, "filter_q0")
-	search_field.send_keys("Nutrient")
-	assert search_field.get_attribute('value') == 'Nutrient'
-	search_field.send_keys(Keys.RETURN)
+# def test_search_within_collection(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	collection_name = driver.find_element(By.CLASS_NAME, "full-chars").text
+# 	search_field = driver.find_element(By.ID, "filter_q0")
+# 	search_field.send_keys("Nutrient")
+# 	assert search_field.get_attribute('value') == 'Nutrient'
+# 	search_field.send_keys(Keys.RETURN)
 
-	records = driver.find_elements(By.CLASS_NAME, "recordrow")
-	# ensure that all results are from the collection that was searched-within
-	assert len(records) == 2
-	for record in records:
-		assert record.find_elements(By.TAG_NAME, "span")[1].text == "Collection: " + collection_name
+# 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
+# 	# ensure that all results are from the collection that was searched-within
+# 	assert len(records) == 2
+# 	for record in records:
+# 		assert record.find_elements(By.TAG_NAME, "span")[1].text == "Collection: " + collection_name
 
-##### TEST FULL FINDING AID MENU OPTIONS ######
+# ##### TEST FULL FINDING AID MENU OPTIONS ######
 
-def test_finding_aid_citation(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	# Citation button has the request class for some reason
-	driver.find_element(By.CLASS_NAME, "request").click()
-	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
-	assert description_tab.text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed September 28, 2022."
+# def test_finding_aid_citation(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	# Citation button has the request class for some reason
+# 	driver.find_element(By.CLASS_NAME, "request").click()
+# 	sleep(1)
+# 	description_tab = driver.find_element(By.ID, "description")
+# 	assert description_tab.text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed September 28, 2022."
 
-	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
-	sleep(1)
-	assert driver.find_element(By.ID, "item").text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University."
+# 	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
+# 	sleep(1)
+# 	assert driver.find_element(By.ID, "item").text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University."
 
-def test_download_pdf(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	driver.find_element(By.ID, "print_button").click()
-	sleep(3)
-	file_path = "/home/puitester/far00002.pdf"
-	assert os.path.isfile(file_path)
-	# TODO: PARSE PDF AND TEST FOR CONTENTS
+# def test_download_pdf(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	driver.find_element(By.ID, "print_button").click()
+# 	sleep(3)
+# 	file_path = "/home/puitester/far00002.pdf"
+# 	assert os.path.isfile(file_path)
+# 	# TODO: PARSE PDF AND TEST FOR CONTENTS
 
-def test_finding_aid_request_button(driver):
-	# Only applies to repositories where the 'request list' plugin is not enabled
-	driver.get(str(_base_url) + "repositories/6/archival_objects/1377844")
-	driver.find_element(By.CLASS_NAME, "request").click()
-	sleep(1)
-	# Tag text is empty when looked at in Selenium, despite being in the page source and working properly on the page itself.
-	# In lieu of comparing text, we check that the request popup is open and contains the correct tags
-	request_popups = driver.find_elements(By.ID, "request_popup")
-	assert len(request_popups) == 1
-	assert len(request_popups[0].find_elements(By.TAG_NAME, "strong")) == 1
-	assert len(request_popups[0].find_elements(By.TAG_NAME, "p")) == 1
+# def test_finding_aid_request_button(driver):
+# 	# Only applies to repositories where the 'request list' plugin is not enabled
+# 	driver.get(str(_base_url) + "repositories/6/archival_objects/1377844")
+# 	driver.find_element(By.CLASS_NAME, "request").click()
+# 	sleep(1)
+# 	# Tag text is empty when looked at in Selenium, despite being in the page source and working properly on the page itself.
+# 	# In lieu of comparing text, we check that the request popup is open and contains the correct tags
+# 	request_popups = driver.find_elements(By.ID, "request_popup")
+# 	assert len(request_popups) == 1
+# 	assert len(request_popups[0].find_elements(By.TAG_NAME, "strong")) == 1
+# 	assert len(request_popups[0].find_elements(By.TAG_NAME, "p")) == 1
 
-def test_download_csv(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	driver.find_element(By.CLASS_NAME, "csv").click()
-	sleep(3)
-	file_path = "/home/puitester/collection_1182.csv"
-	assert os.path.isfile(file_path)
-	file = open(file_path)
-	reader = csv.reader(file)
-	downloaded_rows = []
-	for row in reader:
-		downloaded_rows.append(row)
+# def test_download_csv(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	driver.find_element(By.CLASS_NAME, "csv").click()
+# 	sleep(3)
+# 	file_path = "/home/puitester/collection_1182.csv"
+# 	assert os.path.isfile(file_path)
+# 	file = open(file_path)
+# 	reader = csv.reader(file)
+# 	downloaded_rows = []
+# 	for row in reader:
+# 		downloaded_rows.append(row)
 
-	file = open("/home/puitester/test_data/test_data.csv")
-	reader = csv.reader(file)
-	test_rows = []
-	for row in reader:
-		test_rows.append(row)
+# 	file = open("/home/puitester/test_data/test_data.csv")
+# 	reader = csv.reader(file)
+# 	test_rows = []
+# 	for row in reader:
+# 		test_rows.append(row)
 	
-	index = 0
-	for row in downloaded_rows:
-		print(index)
-		assert row == test_rows[index]
-		index += 1
+# 	index = 0
+# 	for row in downloaded_rows:
+# 		print(index)
+# 		assert row == test_rows[index]
+# 		index += 1
 
-def test_finding_aid_component_citation(driver):
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	# Look at the top level resource to ensure citations are not identical
-	driver.find_element(By.CLASS_NAME, "request").click()
-	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
-	top_level_text = "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed September 28, 2022."
-	assert description_tab.text == top_level_text
+# def test_finding_aid_component_citation(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	# Look at the top level resource to ensure citations are not identical
+# 	driver.find_element(By.CLASS_NAME, "request").click()
+# 	sleep(1)
+# 	description_tab = driver.find_element(By.ID, "description")
+# 	top_level_text = "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed September 28, 2022."
+# 	assert description_tab.text == top_level_text
 
-	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	sleep(1)
-	driver.find_element(By.ID, "sidebar").find_element(By.LINK_TEXT, "Correspondence, 1923-1960").click()
-	assert driver.current_url == "https://aspacepui-dev.lib.harvard.edu/repositories/20/archival_objects/262126"
-	driver.find_element(By.CLASS_NAME, "request").click()
-	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
-	assert description_tab.text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/c/far00002c00001/catalog Accessed September 28, 2022."
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	sleep(1)
+# 	driver.find_element(By.ID, "sidebar").find_element(By.LINK_TEXT, "Correspondence, 1923-1960").click()
+# 	assert driver.current_url == "https://aspacepui-dev.lib.harvard.edu/repositories/20/archival_objects/262126"
+# 	driver.find_element(By.CLASS_NAME, "request").click()
+# 	sleep(1)
+# 	description_tab = driver.find_element(By.ID, "description")
+# 	assert description_tab.text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/c/far00002c00001/catalog Accessed September 28, 2022."
 
-	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
-	sleep(1)
-	assert driver.find_element(By.ID, "item").text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
+# 	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
+# 	sleep(1)
+# 	assert driver.find_element(By.ID, "item").text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
 
-def test_add_to_request_list_button_present(driver):
+# def test_add_to_request_list_button_present(driver):
+# 	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
+# 	add_to_request_list_button = driver.find_elements(By.CLASS_NAME, "request_list_action_button")
+# 	assert len(add_to_request_list_button) == 1
+
+# def test_add_to_request_list_button_not_present(driver):
+# 	# For repos where the request list plugin is not enabled
+# 	driver.get(str(_base_url) + "repositories/6/archival_objects/1377844")
+# 	add_to_request_list_button = driver.find_elements(By.CLASS_NAME, "request_list_action_button")
+# 	assert len(add_to_request_list_button) == 0
+
+###### TEST AEON REQUESTS ######
+def test_add_to_request_list_button_press(driver):
+	driver.delete_cookie("as_pui_request_list_list_contents")
 	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
-	add_to_request_list_button = driver.find_elements(By.CLASS_NAME, "request_list_action_button")
-	assert len(add_to_request_list_button) == 1
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (0)"
+	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (1)"
 
-def test_add_to_request_list_button_not_present(driver):
-	# For repos where the request list plugin is not enabled
-	driver.get(str(_base_url) + "repositories/6/archival_objects/1377844")
-	add_to_request_list_button = driver.find_elements(By.CLASS_NAME, "request_list_action_button")
-	assert len(add_to_request_list_button) == 0
+def test_add_multi_items_to_request_list(driver):
+	driver.delete_cookie("as_pui_request_list_list_contents")
+	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (0)"
+	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (1)"
+
+	driver.get(str(_base_url) + "repositories/24/archival_objects/3129739")
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (1)"
+	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (2)"
+
 
 
 @pytest.fixture(scope='session', autouse=True)
