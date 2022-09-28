@@ -12,5 +12,4 @@ To-Dos:
 - Add a package for reading pdfs in order to test spreadsheet contents (currently only check successful download)
 
 Tests from spreadsheet that were unable to be added:
-- "Request" button has been overridden by request list plugin, so unable to test that functionality
 - All instances of comparing record counts against prod record counts are not relevant due to the intentionally much-smaller size of the data subset.
