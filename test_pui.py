@@ -1,4 +1,5 @@
 import pytest, os
+import csv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -599,13 +600,37 @@ _base_url = os.getenv('BASE_URL')
 # 	sleep(1)
 # 	assert driver.find_element(By.ID, "item").text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University."
 
-def test_download_pdf(driver):
+# def test_download_pdf(driver):
+# 	driver.get(str(_base_url) + "repositories/20/resources/1182")
+# 	driver.find_element(By.ID, "print_button").click()
+# 	sleep(3)
+# 	file_path = "/home/puitester/far00002.pdf"
+# 	assert os.path.isfile(file_path)
+# 	# TODO: PARSE PDF AND TEST FOR CONTENTS
+
+def test_download_csv(driver):
 	driver.get(str(_base_url) + "repositories/20/resources/1182")
-	driver.find_element(By.ID, "print_button").click()
+	driver.find_element(By.CLASS_NAME, "csv").click()
 	sleep(3)
-	file_location = "/home/puitester/far00002.pdf"
-	assert os.path.isfile(file_location)
-	# TODO: PARSE PDF AND TEST FOR CONTENTS
+	file_path = "/home/puitester/collection_1182.csv"
+	assert os.path.isfile(file_path)
+	file = open(file_path)
+	reader = csv.reader(file)
+	downloaded_rows = []
+	for row in reader:
+		downloaded_rows.append(row)
+
+	file = open("/home/puitester/test_data/test_data.csv")
+	reader = csv.reader(file)
+	test_rows = []
+	for row in reader:
+		test_rows.append(row)
+	
+	index = 0
+	for row in downloaded_rows:
+		print(index)
+		assert row == test_rows[index]
+		index += 1
 
 @pytest.fixture(scope='session', autouse=True)
 def driver():
