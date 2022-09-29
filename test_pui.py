@@ -1,3 +1,4 @@
+from urllib import request
 import pytest, os
 import csv
 from selenium import webdriver
@@ -708,60 +709,98 @@ _base_url = os.getenv('BASE_URL')
 # 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
 # 	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (3)"
 
-def test_are_items_on_request_list(driver):
+# def test_are_items_on_request_list(driver):
+# 	driver.delete_cookie("as_pui_request_list_list_contents")
+# 	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
+# 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+
+# 	driver.get(str(_base_url) + "repositories/24/archival_objects/3129739")
+# 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+
+# 	driver.get(str(_base_url) + "repositories/8/archival_objects/2405272")
+# 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
+
+# 	driver.find_element(By.ID, "request_list_top_menu").click()
+# 	sleep(2)
+# 	# For some reason, the request list menu item is occasionally determined as non-interactable by Selenium, so if that's the
+# 	# case, we visit the request list page directly. This behavior has never been observed outside of Selenium-testing contexts
+# 	try:
+# 		driver.find_element(By.CLASS_NAME, "dropdown-menu-right").find_elements(By.TAG_NAME, "a")[0].click()
+# 	except:
+# 		driver.get(str(_base_url) + "plugin/request_list/harvard")
+# 	assert driver.current_url == str(_base_url) + "plugin/request_list/harvard"
+# 	request_list_items = driver.find_elements(By.CLASS_NAME, "rl-list-item")
+# 	assert len(request_list_items) == 3
+
+# 	# Assert all three items display the correct information
+# 	assert request_list_items[0].find_element(By.CLASS_NAME, "rl-display-left").text == "1"
+# 	assert len(request_list_items[0].find_elements(By.XPATH, ".//*")) == 56
+# 	item_rows = request_list_items[0].find_elements(By.TAG_NAME, "td")
+# 	assert item_rows[2].text == "Item: Correspondence, 1923-1960"
+# 	assert item_rows[3].text == "Found In: Albert F. Blakeslee correspondence and notebooks"
+# 	assert item_rows[4].text == "Collection Call Number: far00002 , Item Call Number: I"
+# 	assert item_rows[5].text == ""
+# 	assert item_rows[6].text == "Repository: Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University"
+# 	assert item_rows[7].text == "Restrictions: The collection is available by appointment for research. Researchers must register and provide valid photo identification. Please contact botref@oeb.harvard.edu for additional information."
+	
+# 	assert request_list_items[1].find_element(By.CLASS_NAME, "rl-display-left").text == "2"
+# 	assert len(request_list_items[1].find_elements(By.XPATH, ".//*")) == 53
+# 	item_rows = request_list_items[1].find_elements(By.TAG_NAME, "td")
+# 	assert item_rows[2].text == "Item: Type case, 2012-2015"
+# 	assert item_rows[3].text == "Found In: 83M80: Letterpress in the digital era: records"
+# 	assert item_rows[4].text == "Collection Call Number: MS Typ 1287"
+# 	assert item_rows[5].text == ""
+# 	assert item_rows[6].text == "Repository: Houghton Library"
+# 	assert item_rows[7].text == "Restrictions: Open for research.; A portion of this collection is shelved offsite at the Harvard Depository. Retrieval requires advance notice. Readers should check with Houghton Public Services staff to determine what material is offsite and retrieval policies and times."
+
+# 	assert request_list_items[2].find_element(By.CLASS_NAME, "rl-display-left").text == "3"
+# 	assert len(request_list_items[2].find_elements(By.XPATH, ".//*")) == 53
+# 	item_rows = request_list_items[2].find_elements(By.TAG_NAME, "td")
+# 	assert item_rows[2].text == "Item: Series I. PERSONAL PAPERS, 1933-1984 (#1-246, 547, 2136-2137, Mem.1, Mem.2), 1933-1985"
+# 	assert item_rows[3].text == "Found In: Papers of Betty Friedan, 1933-1985"
+# 	assert item_rows[4].text == "Collection Call Number: MC 575; T-97; T-125, Vt-1; Phon-7"
+# 	assert item_rows[5].text == ""
+# 	assert item_rows[6].text == "Repository: Schlesinger Library, Radcliffe Institute"
+# 	assert item_rows[7].text.startswith("Restrictions: Access. During the lifetimes of the Friedan children (Daniel, Emily, and Jonathan), all readers must sign a special permission form. Some folders in Series III (#415-425, 427-429, 431-434")
+
+def test_request_one_item(driver):
 	driver.delete_cookie("as_pui_request_list_list_contents")
 	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (0)"
 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (1)"
 
 	driver.get(str(_base_url) + "repositories/24/archival_objects/3129739")
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (1)"
 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (2)"
 
 	driver.get(str(_base_url) + "repositories/8/archival_objects/2405272")
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (2)"
 	driver.find_element(By.CLASS_NAME, "request_list_action_button").click()
-	assert driver.find_element(By.ID, "request_list_top_menu").text == "REQUEST (3)"
 
 	driver.find_element(By.ID, "request_list_top_menu").click()
 	sleep(2)
-	driver.find_element(By.CLASS_NAME, "dropdown-menu-right").find_elements(By.TAG_NAME, "a")[0].click()
-	assert driver.current_url == str(_base_url) + "plugin/request_list/harvard"
+	# For some reason, the request list menu item is occasionally determined as non-interactable by Selenium, so if that's the
+	# case, we visit the request list page directly. This behavior has never been observed outside of Selenium-testing contexts
+	try:
+		driver.find_element(By.CLASS_NAME, "dropdown-menu-right").find_elements(By.TAG_NAME, "a")[0].click()
+	except:
+		driver.get(str(_base_url) + "plugin/request_list/harvard")
+
 	request_list_items = driver.find_elements(By.CLASS_NAME, "rl-list-item")
-	assert len(request_list_items) == 3
+	request_list_items[1].find_element(By.TAG_NAME, "input").click()
+	request_list_items[2].find_element(By.TAG_NAME, "input").click()
+	driver.execute_script("arguments[0].removeAttribute('checked')", request_list_items[0])
 
-	# Assert all three items display the correct information
-	assert request_list_items[0].find_element(By.CLASS_NAME, "rl-display-left").text == "1"
-	assert len(request_list_items[0].find_elements(By.XPATH, ".//*")) == 56
-	item_rows = request_list_items[0].find_elements(By.TAG_NAME, "td")
-	assert item_rows[2].text == "Item: Correspondence, 1923-1960"
-	assert item_rows[3].text == "Found In: Albert F. Blakeslee correspondence and notebooks"
-	assert item_rows[4].text == "Collection Call Number: far00002 , Item Call Number: I"
-	assert item_rows[5].text == ""
-	assert item_rows[6].text == "Repository: Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University"
-	assert item_rows[7].text == "Restrictions: The collection is available by appointment for research. Researchers must register and provide valid photo identification. Please contact botref@oeb.harvard.edu for additional information."
-	
-	assert request_list_items[1].find_element(By.CLASS_NAME, "rl-display-left").text == "2"
-	assert len(request_list_items[1].find_elements(By.XPATH, ".//*")) == 53
-	item_rows = request_list_items[1].find_elements(By.TAG_NAME, "td")
-	assert item_rows[2].text == "Item: Type case, 2012-2015"
-	assert item_rows[3].text == "Found In: 83M80: Letterpress in the digital era: records"
-	assert item_rows[4].text == "Collection Call Number: MS Typ 1287"
-	assert item_rows[5].text == ""
-	assert item_rows[6].text == "Repository: Houghton Library"
-	assert item_rows[7].text == "Restrictions: Open for research.; A portion of this collection is shelved offsite at the Harvard Depository. Retrieval requires advance notice. Readers should check with Houghton Public Services staff to determine what material is offsite and retrieval policies and times."
+	driver.find_element(By.CLASS_NAME, "glyphicon-calendar").click()
+	sleep(1)
+	dates = driver.find_element(By.CLASS_NAME, "datepicker-days").find_elements(By.TAG_NAME, "td")
+	for day in dates:
+		if day.get_attribute("class") == "day":
+			day.click()
+			break
+	sleep(1)
 
-	assert request_list_items[2].find_element(By.CLASS_NAME, "rl-display-left").text == "3"
-	assert len(request_list_items[2].find_elements(By.XPATH, ".//*")) == 53
-	item_rows = request_list_items[2].find_elements(By.TAG_NAME, "td")
-	assert item_rows[2].text == "Item: Series I. PERSONAL PAPERS, 1933-1984 (#1-246, 547, 2136-2137, Mem.1, Mem.2), 1933-1985"
-	assert item_rows[3].text == "Found In: Papers of Betty Friedan, 1933-1985"
-	assert item_rows[4].text == "Collection Call Number: MC 575; T-97; T-125, Vt-1; Phon-7"
-	assert item_rows[5].text == ""
-	assert item_rows[6].text == "Repository: Schlesinger Library, Radcliffe Institute"
-	assert item_rows[7].text.startswith("Restrictions: Access. During the lifetimes of the Friedan children (Daniel, Emily, and Jonathan), all readers must sign a special permission form. Some folders in Series III (#415-425, 427-429, 431-434")
+	driver.find_element(By.CLASS_NAME, "submit-requests").click()
+	sleep(1)
+	request_list_items = driver.find_elements(By.CLASS_NAME, "rl-list-item")
+	assert len(request_list_items) == 2
 
 @pytest.fixture(scope='session', autouse=True)
 def driver():
