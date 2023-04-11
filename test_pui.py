@@ -363,8 +363,10 @@ def test_collection_organization(driver):
 	assert sidebar.find_element(By.CLASS_NAME, "title").text == "Albert F. Blakeslee correspondence and notebooks"
 	nodes = sidebar.find_elements(By.CLASS_NAME, "largetree-node")
 	assert len(nodes) == 2
-	assert nodes[0].text == "Correspondence, 1923-1960"
-	assert nodes[1].text == "Notebooks, 1912-1941"
+	# 'Correspondence' and 'Notebooks' appear more than once due to screen-reader only accessibility text added
+	# in some version between 3.0.2 and 3.3.1
+	assert nodes[0].text == "Correspondence\nCorrespondence, 1923-1960"
+	assert nodes[1].text == "Notebooks\nNotebooks, 1912-1941"
 
 	# expand an item
 	nodes[0].find_element(By.CLASS_NAME, "expandme").click()
