@@ -339,8 +339,7 @@ def test_browse_digital_materials(driver):
 	assert driver.current_url == _base_url + "objects?limit=digital_object"
 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
 	assert len(records) == 25
-	# Note that below is the Cyrillic B, not Roman
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("В")
+	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("(")
 
 	# Sort by title (desc)
 	select = Select(driver.find_element(By.ID, 'sort'))
@@ -349,7 +348,7 @@ def test_browse_digital_materials(driver):
 	sort_button.click()
 	records = driver.find_elements(By.CLASS_NAME, "recordrow")
 	assert len(records) == 25
-	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("Z")
+	assert records[0].find_element(By.CLASS_NAME, "record-title").text.startswith("黃")
 
 ###### Test Finding Aid ######
 
