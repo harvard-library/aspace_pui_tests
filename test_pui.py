@@ -644,7 +644,7 @@ def test_finding_aid_component_citation(driver):
 	# Look at the top level resource to ensure citations are not identical
 	driver.find_element(By.CLASS_NAME, "request").click()
 	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
+	description_tab = driver.find_element(By.ID, "item_description_citation")
 	today = datetime.now().strftime("%B %-d, %Y")
 	top_level_text = f"Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed {today}."
 	assert description_tab.text == top_level_text
@@ -655,13 +655,11 @@ def test_finding_aid_component_citation(driver):
 	assert driver.current_url == "https://aspacepui-dev.lib.harvard.edu/repositories/20/archival_objects/262126"
 	driver.find_element(By.CLASS_NAME, "request").click()
 	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
+	description_tab = driver.find_element(By.ID, "item_description_citation")
 	today = datetime.now().strftime("%B %-d, %Y")
 	assert description_tab.text == f"Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/c/far00002c00001/catalog Accessed {today}."
 
-	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
-	sleep(1)
-	assert driver.find_element(By.ID, "item").text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
+	assert driver.find_element(By.ID, "item_citation").text == "Correspondence, 1923-1960. Albert F. Blakeslee correspondence and notebooks, far00002, I. Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University."
 
 def test_add_to_request_list_button_present(driver):
 	driver.get(str(_base_url) + "repositories/20/archival_objects/262126")
