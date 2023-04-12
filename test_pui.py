@@ -590,12 +590,10 @@ def test_finding_aid_citation(driver):
 	# Citation button has the request class for some reason
 	driver.find_element(By.CLASS_NAME, "request").click()
 	sleep(1)
-	description_tab = driver.find_element(By.ID, "description")
+	description_tab = driver.find_element(By.ID, "item_description_citation")
 	today = datetime.now().strftime("%B %-d, %Y")
 	assert description_tab.text == f"Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University. https://id.lib.harvard.edu/ead/far00002/catalog Accessed {today}."
-	driver.find_element(By.CLASS_NAME, "nav-tabs").find_elements(By.TAG_NAME, "li")[0].click()
-	sleep(1)
-	assert driver.find_element(By.ID, "item").text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University."
+	assert driver.find_element(By.ID, "item_citation").text == "Albert F. Blakeslee correspondence and notebooks, 1912-1960. far00002. Archives of the Farlow Herbarium of Cryptogamic Botany, Harvard University."
 
 def test_download_pdf(driver):
 	driver.get(str(_base_url) + "repositories/20/resources/1182")
