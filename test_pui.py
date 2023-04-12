@@ -450,8 +450,8 @@ def test_collection_overview_tab(driver):
 	assert dds[3].text == "dacs"
 	assert dds[4].text == "und"
 	assert dds[5].text == "far00002"
-	assert panel_bodies[3].find_element(By.TAG_NAME, "h2").text == "Repository Details"
-	assert panel_bodies[3].find_element(By.XPATH, "//h2/following-sibling::p").text == "Part of the Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University Repository"
+	assert panel_bodies[3].find_element(By.TAG_NAME, "h3").text == "Repository Details"
+	assert panel_bodies[3].find_element(By.XPATH, "//h3/following-sibling::p").text == "Part of the Botany Libraries, Farlow Reference Library of Cryptogamic Botany, Harvard University Repository"
 	assert panel_bodies[3].find_element(By.CLASS_NAME, "website").find_element(By.TAG_NAME, "a").text == "http://huh.harvard.edu/libraries"
 	assert panel_bodies[3].find_element(By.ID, "lead_graph").text.startswith("The Harvard University Herbaria houses five research libraries that are managed")
 	contact_info = panel_bodies[3].find_element(By.CLASS_NAME, "contact_info")
