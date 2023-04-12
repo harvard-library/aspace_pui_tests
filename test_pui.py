@@ -514,7 +514,7 @@ def test_collection_inventory(driver):
 	for icon in expandme_icons:
 		icon.click()
 	sleep(2)
-	sidebar_records = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "title")
+	sidebar_records = driver.find_element(By.ID, "sidebar").find_elements(By.CLASS_NAME, "record-title")
 	assert len(infinite_records) == len(sidebar_records) == 19
 	index = 0
 	actions = ActionChains(driver)
